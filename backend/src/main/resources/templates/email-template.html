@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <title>${subject}</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f3f4f6; font-family: Arial, sans-serif; color:#333333;">
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#f3f4f6">
+    <tr>
+      <td align="center" style="padding: 40px 10px;">
+        <!-- Container -->
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" bgcolor="#ffffff" style="border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1);">
+          <!-- Header -->
+          <tr>
+            <td align="center" bgcolor="#005A3C" style="padding: 20px; border-top-left-radius:8px; border-top-right-radius:8px;">
+              <!-- Using Unicode icon for bulletproof icon -->
+              <span style="font-size:24px; color:#FFD700; vertical-align: middle;">&#9873;</span>
+              <h2 style="color:#ffffff; font-weight: bold; font-size: 24px; margin: 0; display: inline-block; vertical-align: middle; margin-left:10px;">
+                ${appName}
+              </h2>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding: 30px;">
+              <p style="font-size: 16px; margin: 0 0 20px 0;">Hi <strong>${username}</strong>,</p>
+              <p style="font-size: 16px; line-height: 24px; margin: 0 0 30px 0;">
+                ${message}
+              </p>
+
+              <!-- Call to action button -->
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" style="margin: 0 auto;">
+                <tr>
+                  <td bgcolor="#FFD700" style="border-radius: 5px; text-align:center;">
+                    <a href="${actionLink}" target="_blank" style="display: inline-block; padding: 12px 25px; font-size: 16px; color: #005A3C; text-decoration: none; font-weight: bold; border-radius: 5px;">
+                      <!-- Simple arrow unicode -->
+                      &#10148; ${actionText}
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="font-size: 14px; color: #555555; margin-top: 40px;">
+                Cheers,<br />
+                The <strong>${appName}</strong> Team
+              </p>
+            </td>
+          </tr>
+          <!-- Footer spacing -->
+          <tr>
+            <td style="padding: 10px;"></td>
+          </tr>
+        </table>
+        <!-- End Container -->
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
