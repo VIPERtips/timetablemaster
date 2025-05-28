@@ -97,7 +97,7 @@ public class LessonService {
         return dto;
     }
 
-    @Scheduled(fixedRate = 6000) 
+    @Scheduled(fixedRate = 60000) 
     public void sendUpcomingLessonReminders() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime tenMinsLater = now.plusMinutes(10);
