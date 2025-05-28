@@ -36,6 +36,38 @@ cd teacherpro
 ````
 
 ---
+### ✉️ Email Setup (Gmail)
+The backend uses Gmail SMTP to send real-time notifications. You need to enable it:
+
+Generate App Password:
+
+Go to your Google Account
+
+Go to Security > 2-Step Verification (turn it on)
+
+Go to App Passwords
+
+Select Mail and your device, then generate a password
+
+Copy the generated password
+
+Replace in application.yml:
+
+yaml
+Copy code
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: your-email@gmail.com
+    password: your-generated-app-password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+## Heads up: Don’t push your real credentials to GitHub. Add them in your local application.yml
 
 ### Run the Backend
 
