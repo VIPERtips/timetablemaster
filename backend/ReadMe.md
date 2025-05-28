@@ -30,7 +30,7 @@ A backend system for managing lessons, teacher profiles, and authentication usin
 1. Clone the repo:
 
     ```bash
-    git clone https://github.com/vipertips/vipertips-timetable.git
+    git clone https://github.com/vipertips/timetablemaster.git
     cd vipertips-timetable/backend
     ```
 
