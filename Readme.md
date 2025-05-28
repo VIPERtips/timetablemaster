@@ -29,7 +29,7 @@ teacherpro/
 
 ### Clone the project
 ```bash
-git clone https://github.com/your-repo/teacherpro.git
+[git clone https://github.com/VIPERtips/teacherpro.git](https://github.com/VIPERtips/timetablemaster)
 cd teacherpro
 ````
 
