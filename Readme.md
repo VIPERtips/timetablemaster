@@ -1,5 +1,5 @@
 
-# TeacherPro - Lesson Management System
+# TimeTableMaster - Lesson Management System
 
 A web application for teachers to manage their weekly lesson timetables, featuring real-time notifications and a clean, modern interface.
 
