@@ -1,6 +1,4 @@
-Sure thing, my techy bro. Here’s the ready-to-roll **README.md**:
 
-```markdown
 # TeacherPro - Lesson Management System
 
 A web application for teachers to manage their weekly lesson timetables, featuring real-time notifications and a clean, modern interface.
@@ -121,7 +119,4 @@ MIT License
 
 For help, create an issue in the repo or hit up the team.
 
-```
-
-Copy this into your project’s main **README.md** file, and you’re ready to roll, legend. Let me know if you want to tweak it to be more spicy or straightforward.
 ```
