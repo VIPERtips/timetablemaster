@@ -1,5 +1,5 @@
 
-# TeacherPro - Lesson Management System
+# TimeTableMaster - Lesson Management System
 
 A responsive React frontend application that allows teachers to manage their weekly lesson timetables with real-time notifications.
 
