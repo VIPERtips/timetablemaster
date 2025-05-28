@@ -31,7 +31,7 @@ export const Dashboard = () => {
     try {
       setLoading(true);
       const response = await lessonApi.getTeacherLessons();
-      console.log('API response:', response);
+      //console.log('API response:', response);
       
       if (response.success) {
         // Convert backend lessons to frontend format with proper compatibility
@@ -40,7 +40,7 @@ export const Dashboard = () => {
           id: lesson.lessonId.toString(), // Legacy compatibility
           lessonAbout: lesson.lessonAbout || '', // Ensure this field exists
         }));
-        console.log('Formatted lessons:', formattedLessons);
+        //console.log('Formatted lessons:', formattedLessons);
         setLessons(formattedLessons);
       }
     } catch (error) {

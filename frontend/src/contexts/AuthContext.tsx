@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           id: userData.userId?.toString() || '',
           name: `${userData.firstName} ${userData.lastName}`.trim()
         };
-        console.log(formattedUser)
+        //console.log(formattedUser)
         setUser(formattedUser);
         
         toast({
@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     } catch (error: any) {
       const message = error?.response?.data?.message || 'Login failed';
-      console.log("error why",message)
+      //console.log("error why",message)
       toast({
         title: "Error",
         description: message,

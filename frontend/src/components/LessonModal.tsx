@@ -126,7 +126,7 @@ export const LessonModal = ({ isOpen, onClose, onSave, lesson }: LessonModalProp
 
     setLoading(true);
     try {
-      console.log('Submitting lesson data:', formData);
+      //console.log('Submitting lesson data:', formData);
       await onSave(formData);
       onClose();
     } catch (error) {
