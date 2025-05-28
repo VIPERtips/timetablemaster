@@ -1,4 +1,3 @@
-
 export interface User {
   userId?: number;
   firstName: string;
@@ -36,10 +35,10 @@ export interface AuthContextType {
 
 export interface LessonFormData {
   title: string;
-  startTime: string;
-  endTime: string;
+  lessonDate: string; // YYYY-MM-DD format
+  startTime: string; // HH:mm format
+  endTime: string; // HH:mm format
   lessonAbout?: string;
-  dayOfWeek?: number;
 }
 
 // API Response wrapper type

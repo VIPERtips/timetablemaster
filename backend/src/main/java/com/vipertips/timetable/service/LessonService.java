@@ -56,16 +56,26 @@ public class LessonService {
     public LessonDto updateLesson(int lessonId, LessonDto lessonDto) {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new RuntimeException("Lesson not found"));
-        
-        lesson.setStatus(Status.PENDING);
-        lesson.setTitle(lessonDto.getTitle());
-        lesson.setStartTime(lessonDto.getStartTime());
-        lesson.setLessonAbout(lessonDto.getLessonAbout());
-        lesson.setEndTime(lessonDto.getEndTime());
-        lessonRepository.save(lesson);
 
+        lesson.setStatus(Status.PENDING);
+
+        if (lessonDto.getTitle() != null) {
+            lesson.setTitle(lessonDto.getTitle());
+        }
+        if (lessonDto.getLessonAbout() != null) {
+            lesson.setLessonAbout(lessonDto.getLessonAbout());
+        }
+        if (lessonDto.getStartTime() != null) {
+            lesson.setStartTime(lessonDto.getStartTime());
+        }
+        if (lessonDto.getEndTime() != null) {
+            lesson.setEndTime(lessonDto.getEndTime());
+        }
+
+        lessonRepository.save(lesson);
         return mapToDto(lesson);
     }
+
 
     public void deleteLesson(int lessonId) {
         lessonRepository.deleteById(lessonId);

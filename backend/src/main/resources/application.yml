@@ -34,7 +34,7 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: mytipstadiwa@gmail.com ##for this challenge only
+    username: ##for this challenge only ask for these in email
     password: ##place the password here
     properties:
       mail:

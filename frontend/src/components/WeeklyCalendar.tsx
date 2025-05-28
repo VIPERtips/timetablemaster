@@ -1,10 +1,11 @@
 
 import { useState } from 'react';
-import { format, startOfWeek, addDays, isSameDay, parseISO } from 'date-fns';
+import { format, startOfWeek, addDays, isSameDay } from 'date-fns';
 import { Lesson } from '../types';
 import { ModernButton } from '@/components/ui/modern-button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Plus, Edit, Trash2, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { parseJavaLocalDateTime } from '../lib/dateUtils';
 
 interface WeeklyCalendarProps {
   lessons: Lesson[];
@@ -28,17 +29,15 @@ export const WeeklyCalendar = ({
   const weekStart = startOfWeek(currentWeek);
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
-  // Updated lesson filtering to use actual lesson dates
   const getLessonsForDay = (dayIndex: number) => {
     const targetDate = weekDays[dayIndex];
     return lessons.filter(lesson => {
       try {
-        const lessonDate = parseISO(lesson.startTime);
+        const lessonDate = parseJavaLocalDateTime(lesson.startTime);
         const isSameDate = isSameDay(lessonDate, targetDate);
-        console.log(`Checking lesson ${lesson.title} for day ${format(targetDate, 'yyyy-MM-dd')}: ${isSameDate}`);
         return isSameDate;
       } catch (e) {
-        console.error('Invalid date format for lesson:', lesson.startTime);
+        console.error('Invalid date format for lesson:', lesson.startTime, e);
         return false;
       }
     });
@@ -46,7 +45,7 @@ export const WeeklyCalendar = ({
 
   const formatTime = (timeString: string) => {
     try {
-      const date = parseISO(timeString);
+      const date = parseJavaLocalDateTime(timeString);
       return format(date, 'HH:mm');
     } catch {
       return timeString;
@@ -57,8 +56,7 @@ export const WeeklyCalendar = ({
     const newWeek = new Date(currentWeek);
     newWeek.setDate(newWeek.getDate() + (direction === 'next' ? 7 : -7));
     setCurrentWeek(newWeek);
-    setSelectedDayMobile(null); // Reset mobile selection when navigating
-    console.log('Navigated to week starting:', format(startOfWeek(newWeek), 'yyyy-MM-dd'));
+    setSelectedDayMobile(null);
   };
 
   return (

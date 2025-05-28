@@ -192,11 +192,6 @@ src/
 
 ## Deployment
 
-### Lovable Platform
-The easiest way to deploy is using the Lovable platform:
-1. Click the "Publish" button in the Lovable editor
-2. Your app will be deployed automatically
-
 ### Custom Deployment
 You can deploy the built application to any static hosting service:
 - Vercel
@@ -204,14 +199,3 @@ You can deploy the built application to any static hosting service:
 - GitHub Pages
 - AWS S3 + CloudFront
 
-## License
-
-This project was created with [Lovable](https://lovable.dev) and is available under the MIT License.
-
-## Support
-
-For support, please contact the development team or create an issue in the repository.
-
----
-
-**Project URL**: https://lovable.dev/projects/874e305e-ba9a-4a04-a3d7-dbc048e1864b

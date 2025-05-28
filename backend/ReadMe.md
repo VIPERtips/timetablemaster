@@ -30,17 +30,11 @@ A backend system for managing lessons, teacher profiles, and authentication usin
 1. Clone the repo:
 
     ```bash
-    git clone https://github.com/your-repo/vipertips-timetable.git
-    cd vipertips-timetable
+    git clone https://github.com/vipertips/vipertips-timetable.git
+    cd vipertips-timetable/backend
     ```
 
-2. Update `application.properties` to point to your database:
 
-    ```properties
-    spring.datasource.url=jdbc:mysql://localhost:3306/your_db
-    spring.datasource.username=root
-    spring.datasource.password=password
-    ```
 
 3. Build the project:
 

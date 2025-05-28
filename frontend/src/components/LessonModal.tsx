@@ -1,12 +1,23 @@
 
 import { useState, useEffect } from 'react';
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
 import { Lesson, LessonFormData } from '../types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
+import { 
+  parseJavaLocalDateTime, 
+  extractDateString, 
+  extractTimeString, 
+  validateTimeRange, 
+  createDateTimeFromInputs 
+} from '../lib/dateUtils';
 
 interface LessonModalProps {
   isOpen: boolean;
@@ -15,99 +26,108 @@ interface LessonModalProps {
   lesson?: Lesson | null;
 }
 
-const DAYS_OF_WEEK = [
-  { value: 0, label: 'Sunday' },
-  { value: 1, label: 'Monday' },
-  { value: 2, label: 'Tuesday' },
-  { value: 3, label: 'Wednesday' },
-  { value: 4, label: 'Thursday' },
-  { value: 5, label: 'Friday' },
-  { value: 6, label: 'Saturday' },
-];
-
 export const LessonModal = ({ isOpen, onClose, onSave, lesson }: LessonModalProps) => {
   const [formData, setFormData] = useState<LessonFormData>({
     title: '',
     lessonAbout: '',
-    startTime: '',
-    endTime: '',
-    dayOfWeek: new Date().getDay(),
+    lessonDate: format(new Date(), 'yyyy-MM-dd'),
+    startTime: '09:00',
+    endTime: '10:00',
   });
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     if (lesson) {
       try {
-        const start = new Date(lesson.startTime);
-        const end = new Date(lesson.endTime);
+        const startDate = parseJavaLocalDateTime(lesson.startTime);
+        const endDate = parseJavaLocalDateTime(lesson.endTime);
 
-        const startTime = start.toTimeString().slice(0, 5);
-        const endTime = end.toTimeString().slice(0, 5);
+        const lessonDate = extractDateString(startDate);
+        const startTime = extractTimeString(startDate);
+        const endTime = extractTimeString(endDate);
 
         setFormData({
           title: lesson.title,
           lessonAbout: lesson.lessonAbout || '',
+          lessonDate,
           startTime,
           endTime,
-          dayOfWeek: start.getDay(),
         });
+        setSelectedDate(startDate);
       } catch (error) {
         console.error('Error parsing lesson dates:', error);
+        // Reset to defaults if parsing fails
+        const today = new Date();
         setFormData({
           title: lesson.title,
           lessonAbout: lesson.lessonAbout || '',
-          startTime: '',
-          endTime: '',
-          dayOfWeek: new Date().getDay(),
+          lessonDate: format(today, 'yyyy-MM-dd'),
+          startTime: '09:00',
+          endTime: '10:00',
         });
+        setSelectedDate(today);
       }
     } else {
+      // Reset form for new lesson
+      const today = new Date();
       setFormData({
         title: '',
         lessonAbout: '',
-        startTime: '',
-        endTime: '',
-        dayOfWeek: new Date().getDay(),
+        lessonDate: format(today, 'yyyy-MM-dd'),
+        startTime: '09:00',
+        endTime: '10:00',
       });
+      setSelectedDate(today);
     }
+    setErrors({});
   }, [lesson, isOpen]);
 
-  const createDateTimeString = (dayOfWeek: number, time: string): string => {
-    const now = new Date();
-    const currentDay = now.getDay();
-    
-    // Calculate how many days until the target day
-    let daysUntil = dayOfWeek - currentDay;
-    if (daysUntil < 0) daysUntil += 7;
-    
-    // Create target date
-    const targetDate = new Date(now);
-    targetDate.setDate(now.getDate() + daysUntil);
-    
-    // Set the time
-    const [hours, minutes] = time.split(':').map(Number);
-    targetDate.setHours(hours, minutes, 0, 0);
-    
-    return targetDate.toLocaleString('sv-SE').replace(' ', 'T');
+  const validateForm = (): boolean => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!formData.title.trim()) {
+      newErrors.title = 'Title is required';
+    }
+
+    if (!formData.lessonDate) {
+      newErrors.lessonDate = 'Date is required';
+    }
+
+    if (!formData.startTime) {
+      newErrors.startTime = 'Start time is required';
+    }
+
+    if (!formData.endTime) {
+      newErrors.endTime = 'End time is required';
+    }
+
+    // Validate time range
+    if (formData.startTime && formData.endTime && formData.lessonDate) {
+      const startDateTime = createDateTimeFromInputs(formData.lessonDate, formData.startTime);
+      const endDateTime = createDateTimeFromInputs(formData.lessonDate, formData.endTime);
+      
+      if (!validateTimeRange(startDateTime, endDateTime)) {
+        newErrors.endTime = 'End time must be after start time';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
     setLoading(true);
-
     try {
-      const startDateTime = createDateTimeString(formData.dayOfWeek, formData.startTime);
-      const endDateTime = createDateTimeString(formData.dayOfWeek, formData.endTime);
-
-      const lessonDataToSend = {
-        title: formData.title,
-        lessonAbout: formData.lessonAbout,
-        startTime: startDateTime,
-        endTime: endDateTime,
-      };
-
-      console.log('Sending lesson data:', lessonDataToSend);
-      await onSave(lessonDataToSend);
+      console.log('Submitting lesson data:', formData);
+      await onSave(formData);
       onClose();
     } catch (error) {
       console.error('Lesson save error:', error);
@@ -117,17 +137,30 @@ export const LessonModal = ({ isOpen, onClose, onSave, lesson }: LessonModalProp
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
   };
 
-  const handleSelectChange = (value: string) => {
-    setFormData({
-      ...formData,
-      dayOfWeek: parseInt(value),
-    });
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      setSelectedDate(date);
+      setFormData(prev => ({
+        ...prev,
+        lessonDate: format(date, 'yyyy-MM-dd'),
+      }));
+      
+      if (errors.lessonDate) {
+        setErrors(prev => ({ ...prev, lessonDate: '' }));
+      }
+    }
   };
 
   return (
@@ -149,7 +182,9 @@ export const LessonModal = ({ isOpen, onClose, onSave, lesson }: LessonModalProp
               onChange={handleInputChange}
               required
               placeholder="e.g., Algebra Basics"
+              className={errors.title ? 'border-red-500' : ''}
             />
+            {errors.title && <p className="text-sm text-red-500">{errors.title}</p>}
           </div>
 
           <div className="space-y-2">
@@ -165,19 +200,32 @@ export const LessonModal = ({ isOpen, onClose, onSave, lesson }: LessonModalProp
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="dayOfWeek">Day of Week</Label>
-            <Select value={formData.dayOfWeek.toString()} onValueChange={handleSelectChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a day" />
-              </SelectTrigger>
-              <SelectContent>
-                {DAYS_OF_WEEK.map((day) => (
-                  <SelectItem key={day.value} value={day.value.toString()}>
-                    {day.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label>Lesson Date</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !selectedDate && "text-muted-foreground",
+                    errors.lessonDate && "border-red-500"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={handleDateSelect}
+                  initialFocus
+                  className="pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+            {errors.lessonDate && <p className="text-sm text-red-500">{errors.lessonDate}</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -190,7 +238,9 @@ export const LessonModal = ({ isOpen, onClose, onSave, lesson }: LessonModalProp
                 value={formData.startTime}
                 onChange={handleInputChange}
                 required
+                className={errors.startTime ? 'border-red-500' : ''}
               />
+              {errors.startTime && <p className="text-sm text-red-500">{errors.startTime}</p>}
             </div>
 
             <div className="space-y-2">
@@ -202,7 +252,9 @@ export const LessonModal = ({ isOpen, onClose, onSave, lesson }: LessonModalProp
                 value={formData.endTime}
                 onChange={handleInputChange}
                 required
+                className={errors.endTime ? 'border-red-500' : ''}
               />
+              {errors.endTime && <p className="text-sm text-red-500">{errors.endTime}</p>}
             </div>
           </div>
 
